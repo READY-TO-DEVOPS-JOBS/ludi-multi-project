@@ -2,7 +2,8 @@ pipeline {
     agent any
 
     stages {
-        stage('Build') {
+        
+        stage('Build0') {
             steps {
                 echo 'Building...'
                 // Add your build steps here
