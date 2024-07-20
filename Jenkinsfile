@@ -3,10 +3,9 @@ pipeline {
 
     stages {
         
-        stage('Build0') {
+        stage('checkout') {
             steps {
-                echo 'Building...'
-                // Add your build steps here
+              git branch: 'features', credentialsId: 'jenkins-master-ludi-multi', url: 'git@github.com:READY-TO-DEVOPS-JOBS/ludi-multi-project.git'  
             }
         }
         stage('Test') {
