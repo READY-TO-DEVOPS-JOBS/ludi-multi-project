@@ -12,14 +12,14 @@ pipeline {
         stage('Compile') {
             steps {
                 echo 'Compiling...'
-                sh 'mvn clean compile'
+                sh 'mvn clean package'  // Compile and package the application
             }
         }
 
         stage('Test') {
             agent {
                 docker {
-                    image 'adoptopenjdk:11-jdk-hotspot'
+                    image 'maven:3.6.3-jdk-11'
                     args '-v /var/run/docker.sock:/var/run/docker.sock'  // Optional: if you need Docker inside Docker
                 }
             }
