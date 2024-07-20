@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'adoptopenjdk:11-jdk-hotspot'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Optional: if you need Docker inside Docker
-        }
-    }
+    agent any
 
     stages {
         stage('Checkout') {
@@ -21,14 +16,13 @@ pipeline {
             }
         }
 
-        stage('Push') {
-            steps {
-                echo 'Pushing...'
-                sh 'git push origin features'  // Ensure correct branch is pushed
-            }
-        }
-
         stage('Test') {
+            agent {
+                docker {
+                    image 'adoptopenjdk:11-jdk-hotspot'
+                    args '-v /var/run/docker.sock:/var/run/docker.sock'  // Optional: if you need Docker inside Docker
+                }
+            }
             steps {
                 echo 'Testing...'
                 sh 'mvn test'
@@ -41,6 +35,5 @@ pipeline {
                 // Add your deploy steps here
             }
         }
-
     }
 }
