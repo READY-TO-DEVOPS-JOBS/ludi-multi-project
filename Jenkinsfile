@@ -12,7 +12,7 @@ pipeline {
         stage('Compile') {
             steps {
                 echo 'Compiling...'
-                sh 'mvn clean package'  // Compile and package the application
+                sh 'mvn clean compile'  // Compile and package the application
             }
         }
 
@@ -24,6 +24,8 @@ pipeline {
                 }
             }
             steps {
+                echo 'Installing Maven...'
+                sh 'apt-get update && apt-get install -y maven'
                 echo 'Testing...'
                 sh 'mvn test'
             }
