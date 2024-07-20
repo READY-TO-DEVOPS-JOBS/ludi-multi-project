@@ -2,7 +2,6 @@ pipeline {
     agent {
         docker {
             image 'adoptopenjdk:11-jdk-hotspot'
-            label 'java-agent'
             args '-v /var/run/docker.sock:/var/run/docker.sock'  // Optional: if you need Docker inside Docker
         }
     }
