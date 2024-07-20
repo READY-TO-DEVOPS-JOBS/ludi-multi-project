@@ -1,51 +1,47 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'adoptopenjdk:11-jdk-hotspot'
+            label 'java-agent'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'  // Optional: if you need Docker inside Docker
+        }
+    }
 
     stages {
-        
         stage('Checkout') {
             steps {
-              git branch: 'features', credentialsId: 'jenkins-master-ludi-multi', url: 'git@github.com:READY-TO-DEVOPS-JOBS/ludi-multi-project.git'  
+                git branch: 'features', credentialsId: 'jenkins-master-ludi-multi', url: 'git@github.com:READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
+                sh 'git branch'  // Verify the current branch
             }
         }
         
         stage('Compile') {
             steps {
                 echo 'Compiling...'
-                // Compile the Java code
                 sh 'mvn clean compile'
+            }
+        }
+
+        stage('Push') {
+            steps {
+                echo 'Pushing...'
+                sh 'git push origin features'  // Ensure correct branch is pushed
             }
         }
 
         stage('Test') {
             steps {
                 echo 'Testing...'
-                // Run tests
                 sh 'mvn test'
             }
         }
-        
+
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
                 // Add your deploy steps here
             }
         }
-        
-        stage('Deploy2') {
-            steps {
-                echo 'Deploying...'
-                // Add your deploy steps here
-            }
-        }
 
-    }
-
-    post {
-        always {
-            // Archive test results and build artifacts
-            junit '**/target/surefire-reports/*.xml'
-            archiveArtifacts artifacts: '**/target/*.jar', allowEmptyArchive: true
-        }
     }
 }
