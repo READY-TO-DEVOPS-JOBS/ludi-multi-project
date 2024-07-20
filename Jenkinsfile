@@ -20,7 +20,6 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.6.3-jdk-11'
-                    args '-v /var/run/docker.sock:/var/run/docker.sock'  // Optional: if you need Docker inside Docker
                 }
             }
             steps {
