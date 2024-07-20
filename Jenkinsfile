@@ -24,8 +24,6 @@ pipeline {
                 }
             }
             steps {
-                echo 'Installing Maven...'
-                sh 'sudo apt-get install -y maven'
                 echo 'Testing...'
                 sh 'mvn test'
             }
