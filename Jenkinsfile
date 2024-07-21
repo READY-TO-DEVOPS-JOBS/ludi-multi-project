@@ -1,5 +1,16 @@
 pipeline {
     agent any
+    
+    environment {
+		DOCKERHUB_CREDENTIALS=credentials('ludivine-Dockerhub')
+	}
+
+    options {
+        buildDiscarder(logRotator(numToKeepStr: '5'))
+        disableConcurrentBuilds()
+        timeout (time: 60, unit: 'MINUTES')
+        timestamps()
+    }
 
     stages {
         stage('Checkout') {
@@ -15,13 +26,31 @@ pipeline {
                 sh 'mvn clean compile'  // Compile and package the application
             }
         }
-
-        stage('Test') {
-            steps {
-                echo 'Testing...'
-                sh 'mvn test'
+        
+        stage('SonarQube analysis') {
+            agent {
+                docker {
+                  image 'sonarsource/sonar-scanner-cli:4.7.0'
+                }
             }
-        }
+               environment {
+                   CI = 'true'
+                //    scannerHome = tool 'Sonarqube'
+                   scannerHome='/opt/sonar-scanner'
+                }
+            steps{
+                withSonarQubeEnv('sonarqube') {
+                    sh "${scannerHome}/bin/sonar-scanner"
+                }
+            }
+        }     
+        
+        // stage('Test') {
+        //     steps {
+        //         echo 'Testing...'
+        //         sh 'mvn test'
+        //     }
+        // }
 
         stage('Deploy') {
             steps {
