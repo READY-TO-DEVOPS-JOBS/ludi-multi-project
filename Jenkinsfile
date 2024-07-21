@@ -17,11 +17,6 @@ pipeline {
         }
 
         stage('Test') {
-            agent {
-                docker {
-                    image 'maven:3.6.3-jdk-11'
-                }
-            }
             steps {
                 echo 'Testing...'
                 sh 'mvn test'
