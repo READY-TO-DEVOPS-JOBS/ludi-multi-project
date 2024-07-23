@@ -1,9 +1,5 @@
 pipeline {
     agent any
-    
-    environment {
-		DOCKERHUB_CREDENTIALS=credentials('ludivine-Dockerhub')
-	}
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
