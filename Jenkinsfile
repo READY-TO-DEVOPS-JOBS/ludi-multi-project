@@ -8,7 +8,23 @@ pipeline {
         timestamps()
     }
 
+    environment {
+        MAVEN_VERSION = '3.8.5'
+        MAVEN_HOME = "${WORKSPACE}/maven"
+        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+    }
+
     stages {
+        stage('Install Maven') {
+            steps {
+                sh '''
+                wget https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
+                tar xzvf apache-maven-${MAVEN_VERSION}-bin.tar.gz
+                mv apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
+                '''
+            }
+        }
+
         stage('Checkout') {
             steps {
                git branch: 'features', credentialsId: 'token-jenkins-git', url: 'https://github.com/READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
@@ -29,30 +45,34 @@ pipeline {
                   image 'sonarsource/sonar-scanner-cli:5.0.1'
                 }
             }
-               environment {
-                   CI = 'true'
-                //    scannerHome = tool 'Sonarqube'
-                   scannerHome='/opt/sonar-scanner'
-                }
-            steps{
+            environment {
+                CI = 'true'
+                scannerHome = '/opt/sonar-scanner'
+            }
+            steps {
                 withSonarQubeEnv('Sonar') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
             }
-        }       
-        
-        // stage('Test') {
-        //     steps {
-        //         echo 'Testing...'
-        //         sh 'mvn test'
-        //     }
-        // }
+        }
 
         stage('Deploy') {
             steps {
                 echo 'Deploying...'
                 // Add your deploy steps here
             }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline completed.'
+        }
+        success {
+            echo 'Build succeeded!'
+        }
+        failure {
+            echo 'Build failed!'
         }
     }
 }
