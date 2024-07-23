@@ -18,7 +18,7 @@ pipeline {
         stage('Install Maven') {
             steps {
                 sh '''
-                wget https://downloads.apache.org/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
+                wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
                 tar xzvf apache-maven-${MAVEN_VERSION}-bin.tar.gz
                 mv apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
                 '''
