@@ -8,22 +8,22 @@ pipeline {
         timestamps()
     }
 
-    environment {
-        MAVEN_VERSION = '3.8.5'
-        MAVEN_HOME = "${WORKSPACE}/maven"
-        PATH = "${MAVEN_HOME}/bin:${env.PATH}"
-    }
+    // environment {
+    //     MAVEN_VERSION = '3.8.5'
+    //     MAVEN_HOME = "${WORKSPACE}/maven"
+    //     PATH = "${MAVEN_HOME}/bin:${env.PATH}"
+    // }
 
     stages {
-        stage('Install Maven') {
-            steps {
-                sh '''
-                wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
-                tar xzvf apache-maven-${MAVEN_VERSION}-bin.tar.gz
-                mv apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
-                '''
-            }
-        }
+        // stage('Install Maven') {
+        //     steps {
+        //         sh '''
+        //         wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
+        //         tar xzvf apache-maven-${MAVEN_VERSION}-bin.tar.gz
+        //         mv apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
+        //         '''
+        //     }
+        // }
 
         stage('Checkout') {
             steps {
@@ -32,12 +32,12 @@ pipeline {
             }
         }
         
-        stage('Compile') {
-            steps {
-                echo 'Compiling...'
-                sh 'mvn clean compile'  // Compile and package the application
-            }
-        }
+        // stage('Compile') {
+        //     steps {
+        //         echo 'Compiling...'
+        //         sh 'mvn clean compile'  // Compile and package the application
+        //     }
+        // }
         
         stage('SonarQube analysis') {
             agent {
