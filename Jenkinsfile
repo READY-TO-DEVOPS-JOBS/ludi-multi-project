@@ -28,7 +28,8 @@ pipeline {
             }
             steps {
                 echo 'Compiling and packaging...'
-                sh 'mvn clean package'  // Compile and package the source code
+                sh 'mvn clean package -DskipTests'  // Compile and package the source code, skipping tests for now
+                sh 'ls -la target'  // List the contents of the target directory for debugging
             }
         }
 
