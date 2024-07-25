@@ -4,45 +4,46 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         disableConcurrentBuilds()
-        timeout (time: 60, unit: 'MINUTES')
+        timeout(time: 60, unit: 'MINUTES')
         timestamps()
     }
 
-    // environment {
-    //     MAVEN_VERSION = '3.8.5'
-    //     MAVEN_HOME = "${WORKSPACE}/maven"
-    //     PATH = "${MAVEN_HOME}/bin:${env.PATH}"
-    // }
-
     stages {
-        // stage('Install Maven') {
-        //     steps {
-        //         sh '''
-        //         wget https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz
-        //         tar xzvf apache-maven-${MAVEN_VERSION}-bin.tar.gz
-        //         mv apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
-        //         '''
-        //     }
-        // }
-
         stage('Checkout') {
             steps {
-               git branch: 'features', credentialsId: 'token-jenkins-git', url: 'https://github.com/READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
+                git branch: 'features', credentialsId: 'token-jenkins-git', url: 'https://github.com/READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
                 sh 'git branch'  // Verify the current branch
             }
         }
-        
+
         stage('Compile') {
+            agent {
+                docker {
+                    image 'maven:3.8.5-openjdk-17'
+                }
+            }
             steps {
                 echo 'Compiling...'
-                sh 'mvn clean compile'  // Compile and package the application
+                sh 'mvn clean compile'  // Compile the source code
             }
         }
-        
+
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.8.5-openjdk-17'
+                }
+            }
+            steps {
+                echo 'Running tests...'
+                sh 'mvn test'  // Run the unit tests
+            }
+        }
+
         stage('SonarQube analysis') {
             agent {
                 docker {
-                  image 'sonarsource/sonar-scanner-cli:5.0.1'
+                    image 'sonarsource/sonar-scanner-cli:5.0.1'
                 }
             }
             environment {
@@ -56,7 +57,6 @@ pipeline {
             }
         }
 
-        
         stage('Deploy1') {
             steps {
                 echo 'Deploying...'
