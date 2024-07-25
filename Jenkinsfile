@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     environment {
-		DOCKERHUB_CREDENTIALS=credentials('del-docker-hub-auth')
-	}
+        DOCKERHUB_CREDENTIALS = credentials('del-docker-hub-auth')
+    }
 
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
@@ -32,18 +32,6 @@ pipeline {
             }
         }
 
-        // stage('Test') {
-        //     agent {
-        //         docker {
-        //             image 'maven:3.8.5-openjdk-17'
-        //         }
-        //     }
-        //     steps {
-        //         echo 'Running tests...'
-        //         sh 'mvn test'  // Run the unit tests
-        //     }
-        // }
-
         stage('SonarQube analysis') {
             agent {
                 docker {
@@ -61,12 +49,22 @@ pipeline {
             }
         }
 
-        stage('Login') {
+        stage('Login to Docker Hub') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
 
-			steps {
-				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
-			}
-		}
+        stage('Build and Push Docker Image') {
+            steps {
+                script {
+                    def imageName = 'devopseasylearning/s5ludivine:project-shack'
+                    sh "docker build -t $imageName ."
+                    sh "docker push $imageName"
+                }
+            }
+        }
+
         stage('Deploy1') {
             steps {
                 echo 'Deploying...'
