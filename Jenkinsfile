@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+		DOCKERHUB_CREDENTIALS=credentials('del-docker-hub-auth')
+	}
+
     options {
         buildDiscarder(logRotator(numToKeepStr: '5'))
         disableConcurrentBuilds()
@@ -57,6 +61,12 @@ pipeline {
             }
         }
 
+        stage('Login') {
+
+			steps {
+				sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+			}
+		}
         stage('Deploy1') {
             steps {
                 echo 'Deploying...'
