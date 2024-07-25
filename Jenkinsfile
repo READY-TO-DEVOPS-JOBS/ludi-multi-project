@@ -32,12 +32,12 @@ pipeline {
             }
         }
         
-        // stage('Compile') {
-        //     steps {
-        //         echo 'Compiling...'
-        //         sh 'mvn clean compile'  // Compile and package the application
-        //     }
-        // }
+        stage('Compile') {
+            steps {
+                echo 'Compiling...'
+                sh 'mvn clean compile'  // Compile and package the application
+            }
+        }
         
         stage('SonarQube analysis') {
             agent {
