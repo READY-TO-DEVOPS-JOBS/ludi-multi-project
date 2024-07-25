@@ -20,15 +20,15 @@ pipeline {
             }
         }
 
-        stage('Compile') {
+        stage('Compile and Package') {
             agent {
                 docker {
                     image 'maven:3.8.5-openjdk-17'
                 }
             }
             steps {
-                echo 'Compiling...'
-                sh 'mvn clean compile'  // Compile the source code
+                echo 'Compiling and packaging...'
+                sh 'mvn clean package'  // Compile and package the source code
             }
         }
 
