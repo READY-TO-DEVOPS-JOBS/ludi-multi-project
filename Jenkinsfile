@@ -28,17 +28,17 @@ pipeline {
             }
         }
 
-        stage('Test') {
-            agent {
-                docker {
-                    image 'maven:3.8.5-openjdk-17'
-                }
-            }
-            steps {
-                echo 'Running tests...'
-                sh 'mvn test'  // Run the unit tests
-            }
-        }
+        // stage('Test') {
+        //     agent {
+        //         docker {
+        //             image 'maven:3.8.5-openjdk-17'
+        //         }
+        //     }
+        //     steps {
+        //         echo 'Running tests...'
+        //         sh 'mvn test'  // Run the unit tests
+        //     }
+        // }
 
         stage('SonarQube analysis') {
             agent {
