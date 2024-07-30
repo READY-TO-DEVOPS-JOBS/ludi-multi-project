@@ -1,8 +1,5 @@
 pipeline {
-    
-    agent {
-        label 'SERVER03'
-    }
+    agent any
 
     environment {
         DOCKERHUB_CREDENTIALS = credentials('del-docker-hub-auth')
@@ -17,6 +14,9 @@ pipeline {
 
     stages {
         stage('Checkout') {
+            agent {
+                label 'SERVER03'
+            }
             steps {
                 git branch: 'features', credentialsId: 'token-jenkins-git', url: 'https://github.com/READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
                 sh 'git branch'  // Verify the current branch
@@ -46,8 +46,7 @@ pipeline {
                 echo 'Running tests...'
                 sh 'mvn clean'
                 sh 'mvn test -DskipTests=true' 
-                sh 'cd target'
-                sh 'ls -la' // Run tests, but skip them
+                 // Run tests, but skip them
             }
         }
 
@@ -69,6 +68,9 @@ pipeline {
         }
 
         stage('Build and Push Docker Image') {
+            agent {
+                label 'SERVER03'
+            }
             steps {
                 script {
                     def imageName = 'devopseasylearning/s5ludivine:project-shack'
@@ -79,6 +81,9 @@ pipeline {
         }
 
         stage('Deploy1') {
+            agent {
+                label 'SERVER03'
+            }
             steps {
                 echo 'Deploying...'
                 // Add your deploy steps here
