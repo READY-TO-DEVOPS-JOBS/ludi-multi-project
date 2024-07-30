@@ -1,6 +1,7 @@
 pipeline {
-    agent any
-
+    agent {
+        label 'SERVER03'
+    }
     environment {
         DOCKERHUB_CREDENTIALS = credentials('del-docker-hub-auth')
     }
