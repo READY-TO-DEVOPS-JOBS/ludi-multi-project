@@ -41,6 +41,7 @@ pipeline {
             }
             steps {
                 echo 'Running tests...'
+                sh 'mvn clean'
                 sh 'mvn test -DskipTests=true'  // Run tests, but skip them
             }
         }
