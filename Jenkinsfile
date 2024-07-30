@@ -28,8 +28,20 @@ pipeline {
             }
             steps {
                 echo 'Compiling and packaging...'
-                sh 'mvn clean package -DskipTests'  // Compile and package the source code, skipping tests for now
+                sh 'mvn clean package -DskipTests=true'  // Compile and package the source code, skipping tests
                 sh 'ls -la target'  // List the contents of the target directory for debugging
+            }
+        }
+
+        stage('Test') {
+            agent {
+                docker {
+                    image 'maven:3.8.5-openjdk-17'
+                }
+            }
+            steps {
+                echo 'Running tests...'
+                sh 'mvn test -DskipTests=true'  // Run tests, but skip them
             }
         }
 
@@ -47,12 +59,6 @@ pipeline {
                 withSonarQubeEnv('Sonar') {
                     sh "${scannerHome}/bin/sonar-scanner"
                 }
-            }
-        }
-
-        stage('Login to Docker Hub') {
-            steps {
-                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
             }
         }
 
