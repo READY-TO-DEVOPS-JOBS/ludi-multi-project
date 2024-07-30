@@ -42,7 +42,9 @@ pipeline {
             steps {
                 echo 'Running tests...'
                 sh 'mvn clean'
-                sh 'mvn test -DskipTests=true'  // Run tests, but skip them
+                sh 'mvn test -DskipTests=true' 
+                sh 'cd target'
+                sh 'ls -la' // Run tests, but skip them
             }
         }
 
