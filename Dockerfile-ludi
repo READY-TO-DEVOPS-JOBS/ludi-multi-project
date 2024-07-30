@@ -1,5 +1,6 @@
-FROM adoptopenjdk/openjdk11  AS build
-# maven:3.8.5-openjdk-17
+# Stage 1: Build the application using Maven
+FROM maven:3.8.5-openjdk-17 AS build
+
 # Set the working directory inside the container
 WORKDIR /app
 
@@ -27,29 +28,3 @@ EXPOSE 8080
 # Run the application
 CMD ["java", "-jar", "app.jar"]
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# FROM maven:3.8.4-openjdk-11
-# # adoptopenjdk/openjdk11
-  
-# EXPOSE 8080
- 
-# ENV APP_HOME /usr/src/app
-
-# COPY target/*.jar $APP_HOME/app.jar
-
-# WORKDIR $APP_HOME
-
-# CMD ["java", "-jar", "app.jar"]
