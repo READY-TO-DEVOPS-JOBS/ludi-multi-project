@@ -38,11 +38,15 @@ pipeline {
         }
 
         stage('Test') {
+            // agent {
+            //     docker {
+            //         image 'maven:3.8.5-openjdk-17'
+            //     }
+            // }
             agent {
-                docker {
-                    image 'maven:3.8.5-openjdk-17'
-                }
+                label 'SERVER03'
             }
+            
             steps {
                 echo 'Running tests...'
                 sh 'mvn clean'
