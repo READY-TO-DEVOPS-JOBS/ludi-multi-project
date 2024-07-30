@@ -1,4 +1,5 @@
-FROM adoptopenjdk/openjdk11
+FROM maven:3.8.4-openjdk-11
+# adoptopenjdk/openjdk11
   
 EXPOSE 8080
  
