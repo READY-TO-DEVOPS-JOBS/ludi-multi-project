@@ -1,1 +1,5 @@
-We discovered that disk space issues and a Java version mismatch were preventing the successful build of your Docker image. After freeing up disk space, we completely removed Java 21 and installed Java 11, which your application requires. We verified the Maven build process to ensure the JAR file was generated correctly. The Jenkinsfile was updated to include necessary debugging steps and ensure Docker commands run smoothly. With these changes, you should now be able to build your Docker image successfully.
+We discovered that disk space issues and a Java version mismatch were preventing the successful build of your Docker image.
+freeing up disk space, 
+removed Java 21 and installed Java 11, which your application requires.
+We verified the Maven build process to ensure the JAR file was generated correctly. 
+The Jenkinsfile was updated to include necessary debugging steps and ensure Docker commands run smoothly. 
