@@ -15,7 +15,7 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                
+                git branch: 'main', url: 'https://github.com/READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
             }
         }
 
