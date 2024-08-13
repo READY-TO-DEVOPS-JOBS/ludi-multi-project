@@ -1,7 +1,6 @@
 pipeline {
-    agent {
-        label 'SERVER03'
-    }
+    agent any
+
     environment {
         DOCKERHUB_CREDENTIALS = credentials('del-docker-hub-auth')
     }
@@ -15,25 +14,26 @@ pipeline {
 
     stages {
         stage('Checkout') {
-            agent {
-                label 'SERVER03'
-            }
             steps {
-                git branch: 'features', credentialsId: 'token-jenkins-git', url: 'https://github.com/READY-TO-DEVOPS-JOBS/ludi-multi-project.git'
-                sh 'git branch'  // Verify the current branch
+                
             }
         }
 
-        stage('Compile and Package') {
+        stage('Login to DockerHub') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+
+        stage('Compile') {
             agent {
                 docker {
                     image 'maven:3.8.5-openjdk-17'
+                    args '-v $HOME/.m2:/root/.m2' // Caches Maven dependencies between builds
                 }
             }
             steps {
-                echo 'Compiling and packaging...'
-                sh 'mvn clean package -DskipTests=true'  // Compile and package the source code, skipping tests
-                sh 'ls -la target'  // List the contents of the target directory for debugging
+                sh 'mvn clean compile'
             }
         }
 
@@ -41,17 +41,16 @@ pipeline {
             agent {
                 docker {
                     image 'maven:3.8.5-openjdk-17'
+                    args '-v $HOME/.m2:/root/.m2' // Caches Maven dependencies between builds
                 }
             }
             steps {
                 echo 'Running tests...'
-                sh 'mvn clean'
-                sh 'mvn test -DskipTests=true' 
-                 // Run tests, but skip them
+                sh 'mvn test -DskipTests=true'  // Tests are skipped here
             }
         }
 
-        stage('SonarQube analysis') {
+        stage('SonarQube Analysis') {
             agent {
                 docker {
                     image 'sonarsource/sonar-scanner-cli:5.0.1'
@@ -68,31 +67,130 @@ pipeline {
             }
         }
 
-        stage('Build and Push Docker Image') {
+        stage('Package') {
             agent {
-                label 'SERVER03'
+                docker {
+                    image 'maven:3.8.5-openjdk-17'
+                }
             }
             steps {
+                sh 'mvn clean package -DskipTests=true'
+                stash includes: 'target/*.jar', name: 'jar'
+            }
+        }
+
+        stage('Build and Push Docker Image') {
+            steps {
+                unstash 'jar'
                 script {
-                    def imageName = 'devopseasylearning/s5ludivine:project-shack'
-                    sh "docker build -t $imageName ."
-                    sh "docker push $imageName"
+                    def imageName = "devopseasylearning/s5ludivine:javaapp-$BUILD_NUMBER"
+                    
+                    // Ensure the artifact exists
+                    sh 'ls -l target/*.jar'
+
+                    // Build Docker image
+                    sh """
+                    docker build -t $imageName .
+                    docker push $imageName
+                    """
                 }
             }
         }
-
-      
-    }
-
-    post {
-        always {
-            echo 'Pipeline completed.'
-        }
-        success {
-            echo 'Build succeeded!'
-        }
-        failure {
-            echo 'Build failed!'
-        }
     }
 }
+
+
+
+
+
+
+   
+    // stage('File System Scan') {
+        //     steps {
+        //         sh "trivy fs --format table -o trivy-fs-report.html ."
+        //     }
+        // }
+
+    // stage('Docker Image Scan') {
+    //         steps {
+    //             sh "trivy image --format table -o trivy-image-report.html fridade/comm-card:jenkins-$BUILD_NUMBER "
+    //         }
+    //     }
+
+
+//  stage('helm-charts') {
+
+
+// 	      steps {
+// 	        script {
+// 	          withCredentials([
+// 	            string(credentialsId: 'github-cred', variable: 'TOKEN')
+// 	          ]) {
+
+// 	            sh '''
+//                 rm -rf commercial-card || true 
+//                 git clone https://$TOKEN@github.com/fridade/commercial-card.git
+//                 cd commercial-card
+// cat << EOF > values.yaml
+//        repository:
+//          tag:   jenkins-$BUILD_NUMBER
+//          assets:
+//           image: fridade/comm-card
+       
+         
+// EOF
+// git config --global user.name "fridade"
+// git config --global user.email "info@fridade.com"
+//    cat  values.yaml
+   
+//    git add -A 
+//     git commit -m "Change from JENKINS" 
+//     git push  https://fridade:$TOKEN@github.com/fridade/commercial-card.git
+// 	            '''
+// 	          }
+
+// 	        }
+
+// 	      }
+
+// 	    }
+
+
+      
+
+
+
+
+       
+        
+
+
+
+
+
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+//    }
+
+
+
+

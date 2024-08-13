@@ -1,5 +1,16 @@
-We discovered that disk space issues and a Java version mismatch were preventing the successful build of your Docker image.
-freeing up disk space, 
-removed Java 21 and installed Java 11, which your application requires.
-We verified the Maven build process to ensure the JAR file was generated correctly. 
-The Jenkinsfile was updated to include necessary debugging steps and ensure Docker commands run smoothly. 
+error when building the image
+
+- We discovered that disk space issues and a Java version mismatch were preventing the successful build of your Docker image.
+
+*freeing up disk space, 
+*removed Java 21 and installed Java 11, which your application requires.
+
+Still unable to build the image
+
+*We ensured that the "Compile," "Test," and "Package" stages were all using the same Docker image (maven:3.8.5-openjdk-17). This consistency ensures that the build process occurs in the same environment, making the target directory accessible across these stages.
+
+*Stash and Unstash:
+The stash command was used to save the JAR file generated during the "Build&Package" stage. 
+By stashing the JAR file, we ensured that it could be retrieved later in the "Build and Push Docker Image" stage using unstash.
+
+The use of stash and unstash provided a reliable method to pass artifacts between stages, and by maintaining a consistent environment across the relevant stages, we avoided the problem of missing files.
